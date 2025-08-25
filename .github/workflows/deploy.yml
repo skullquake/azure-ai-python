@@ -1,0 +1,29 @@
+name: Deploy Python Function App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Or your desired Python version
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy Azure Function App
+        uses: azure/functions-action@v1
+        with:
+          app-name: azure-ai-python # Replace with your Function App name
+          package: '.' # Path to your function app code
