@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  id-token: write # Required for OIDC authentication
+  contents: read # Example: if you need to read repository content
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
