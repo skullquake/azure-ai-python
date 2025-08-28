@@ -7,4 +7,4 @@ curl -v -X POST "$PROTOCOL://$HOST:$PORT/api/callai" \
   -F "subject=Test Subject" \
   -F "recipient=test@example.com" \
   -F "body=This is a test email body." \
-  -F "attachments=@/mnt/c/tmp/b.png"
+  -F "attachments=@/mnt/c/tmp/a.pdf"

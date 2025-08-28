@@ -10,6 +10,16 @@ import base64
 import io
 import random
 import string
+################################################################################
+# azure logging sample
+################################################################################
+logger = logging.getLogger('akshay')
+logger.setLevel(logging.DEBUG)
+sh = logging.StreamHandler()
+sh.setLevel(logging.DEBUG)
+logger.addHandler(sh)
+logger.debug('Constructor:begin')
+logger.debug('Constructor:end')
 # ------------------------------------------------------------------------------
 # Azure Document Intelligence: Upload, Analyze, Poll, and Get Result
 # ------------------------------------------------------------------------------
@@ -83,16 +93,53 @@ def analyze_document_stream(
         time.sleep(poll_interval)
     logger.debug("Analysis complete.")
     return poll_json
-################################################################################
-# azure logging sample
-################################################################################
-logger = logging.getLogger('akshay')
-logger.setLevel(logging.DEBUG)
-sh = logging.StreamHandler()
-sh.setLevel(logging.DEBUG)
-logger.addHandler(sh)
-logger.debug('Constructor:begin')
-logger.debug('Constructor:end')
+# ------------------------------------------------------------------------------
+# Xano data upload
+# ------------------------------------------------------------------------------
+def xano_upload(
+    header: str,
+    subject: str,
+    recipient: str,
+    body: str,
+    ocr: str
+) -> dict:
+    """
+    Uploads data to Xano
+	curl -X 'POST' \
+	  'https://x8ki-letl-twmt.n7.xano.io/api:USJv7WvK/email' \
+	  -H 'accept: application/json' \
+	  -H 'Content-Type: application/json' \
+	  -d '{
+	  "header": "s'$TIMESTAMP'",
+	  "subject": "s'$TIMESTAMP'",
+	  "recipient": "s'$TIMESTAMP'",
+	  "body": "s'$TIMESTAMP'",
+	  "ocr": "s'$TIMESTAMP'"
+	}'
+    Args:
+        logger: Optional logger for debug output.
+    Returns:
+        dict: The Xano upload result
+    """
+    url = "https://x8ki-letl-twmt.n7.xano.io/api:USJv7WvK/email"
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "header": header,
+        "subject": subject,
+        "recipient": recipient,
+        "body": body,
+        "ocr": ocr
+    }
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        logging.error(f"Xano upload failed: {e}")
+        return {"error": str(e)}
 ################################################################################
 # constants
 ################################################################################
@@ -263,6 +310,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 api_version=AZURE_API_VERSION,
                 logger=logger
             )
+            try:
+                # Upload to xano
+                xano_upload(
+                    header,
+                    subject,
+                    recipient,
+                    body,
+                    analyze_result
+                )
+            except Exception as e:
+                logger.error(f"xano_upload failed: {e}")
+                analyze_result = {"status": "error", "message": str(e)}
         except Exception as e:
             logger.error(f"analyze_document_stream failed: {e}")
             analyze_result = {"status": "error", "message": str(e)}

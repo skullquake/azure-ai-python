@@ -3,7 +3,7 @@ import azure.functions as func
 def main(req: func.HttpRequest) -> func.HttpResponse:
     resp = {
         "status": "success",
-        "message": "testWarren"
+        "message": "test9"
     }
     return func.HttpResponse(
         json.dumps(resp),
