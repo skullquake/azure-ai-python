@@ -101,7 +101,8 @@ def xano_upload(
     subject: str,
     recipient: str,
     body: str,
-    ocr: str
+    ocr: str,
+    logger: Optional[logging.Logger] = None
 ) -> dict:
     """
     Uploads data to Xano
@@ -121,9 +122,12 @@ def xano_upload(
     Returns:
         dict: The Xano upload result
     """
+    if logger is None:
+        logger = logging.getLogger("callai.xano_upload")
+    logger.debug(f"Uploading to xano")
     url = "https://x8ki-letl-twmt.n7.xano.io/api:USJv7WvK/email"
     headers = {
-        "accept": "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json"
     }
     payload = {
@@ -131,13 +135,15 @@ def xano_upload(
         "subject": subject,
         "recipient": recipient,
         "body": body,
-        "ocr": ocr
+        "ocr": json.dumps(ocr)
     }
     try:
         response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()
+        logger.debug("Xano upload complete.")
         return response.json()
     except requests.RequestException as e:
+        logger.debug("Xano upload failed.")
         logging.error(f"Xano upload failed: {e}")
         return {"error": str(e)}
 ################################################################################
@@ -317,7 +323,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     subject,
                     recipient,
                     body,
-                    analyze_result
+                    analyze_result,
+                    logger=logger
                 )
             except Exception as e:
                 logger.error(f"xano_upload failed: {e}")
