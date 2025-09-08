@@ -1,6 +1,8 @@
 #!/bin/bash
 PROTOCOL=https
-HOST=main-pnp-linux-function-app.azurewebsites.net
+HOST=main-pnp-linux-function-app3.azurewebsites.net
+HOST=python-function-app-bh5xta.azurewebsites.net
+HOST=python-function-app-qhm08h.azurewebsites.net
 PORT=443
 curl -v -X POST "$PROTOCOL://$HOST:$PORT/api/callai" \
   -F "header=Test Header" \

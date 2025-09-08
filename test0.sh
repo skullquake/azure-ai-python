@@ -8,7 +8,7 @@ echo '{
 	"subject":"Test Subject",
 	"recipient":"test@example.com",
 	"attachments":[
-		"'$(cat ./res/a.png|base64 -w0)'"
+		"'$(cat ./res/b.png|base64 -w0)'"
 	],
 	"body":"This is a test email body."
 }'>$BODY

@@ -70,8 +70,11 @@ def analyze_document_stream(
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": subscription_key
     }
-    analyze_payload = {"urlSource": img_url}
+    #analyze_payload = {"urlSource": img_url}
+    analyze_payload = {"urlSource": blob_url}
     logger.debug(f"Starting analysis: {analyze_url}")
+    logger.debug(analyze_headers)
+    logger.debug(analyze_payload)
     analyze_resp = requests.post(analyze_url, headers=analyze_headers, json=analyze_payload)
     if not (200 <= analyze_resp.status_code < 300):
         raise RuntimeError(f"Analyze start failed: {analyze_resp.status_code} {analyze_resp.text}")

@@ -1,6 +1,7 @@
 #!/bin/bash
 PROTOCOL=https
-HOST=main-pnp-linux-function-app.azurewebsites.net
+HOST=python-function-app-bh5xta.azurewebsites.net
+HOST=python-function-app-qhm08h.azurewebsites.net
 PORT=443
 BODY=$(mktemp /tmp/payload.XXXXXX.json)
 echo '{
